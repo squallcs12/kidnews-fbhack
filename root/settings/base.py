@@ -45,6 +45,7 @@ default = {
     'PUSHER_APP_KEY': (str, ''),
     'PUSHER_APP_SECRET': (str, ''),
     'BASE_URL': (str, 'http://localhost:8000'),
+    'CELERY_ALWAYS_EAGER': (bool, False),
 }
 
 env = environ.Env(**default)
@@ -224,3 +225,4 @@ CELERYBEAT_SCHEDULE = {
         'args': None,
     },
 }
+CELERY_ALWAYS_EAGER = env('CELERY_ALWAYS_EAGER')

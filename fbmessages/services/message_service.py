@@ -100,7 +100,7 @@ class MessageService:
                         },
                         {
                             "type": "postback",
-                            "title": "12h true",
+                            "title": "12h trua",
                             "payload": 'NOTIFICATION_12',
                         },
                         {
