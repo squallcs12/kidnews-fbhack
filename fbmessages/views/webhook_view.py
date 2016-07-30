@@ -9,6 +9,7 @@ from django.http.response import HttpResponse, HttpResponseForbidden, HttpRespon
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+from accountkit.models import Account
 from fbmessages.models import FacebookUser
 
 logger = logging.getLogger(__name__)
@@ -49,9 +50,24 @@ class WebhookView(APIView):
             self.handle_received_message(message)
         if message.get('postback'):
             self.handle_postback(message)
+        if message.get('account_linking'):
+            self.handle_account_linking(message)
 
     def get_sender_id(self, message):
         return message['sender']['id']
+
+    def handle_account_linking(self, message):
+        sender_id = self.get_sender_id(message)
+        account_linking = message['account_linking']
+        status = account_linking['status']
+        authorization_code = account_linking.get('authorization_code')
+
+        user = Account.objects.get(key=authorization_code)
+        if status == 'linked':
+            FacebookUser.objects.create(user=user, facebook_id=sender_id)
+        elif status == 'unlinked':
+            fb_user = FacebookUser.objects.get(facebook_id=sender_id)
+            fb_user.delete()
 
     def handle_postback(self, message):
         sender_id = self.get_sender_id(message)

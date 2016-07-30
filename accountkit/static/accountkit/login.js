@@ -26,7 +26,9 @@
   }
 
   $('#code_form').ajaxForm(function (data) {
-    console.log(data);
+    location.href = 'https://www.facebook.com/messenger_platform/account_linking' +
+                    '?account_linking_token=' + (new URI()).search(true).account_linking_token +
+                    '&authorization_code=' + data.key;
   });
 
   // phone form submission handler

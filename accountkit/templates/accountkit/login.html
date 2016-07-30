@@ -66,6 +66,7 @@
 {% block footer-js %}
   {{ block.super }}
   <script src="https://sdk.accountkit.com/en_US/sdk.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.18.1/URI.min.js"></script>
   <script>
     FACEBOOK_APP_ID = {{FACEBOOK_APP_ID}};
     ACCOUNT_KIT_API_VERSION = "{{ ACCOUNT_KIT_API_VERSION }}";
