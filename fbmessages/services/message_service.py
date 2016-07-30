@@ -84,3 +84,31 @@ class MessageService:
                 }
             }
         })
+
+    def send_notification_settings_message(self, recepient_id):
+        self.send_message(recepient_id, {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": "Mỗi ngày bạn sẽ được thông báo tin mới. Bạn muốn được thông báo tin mới vào thời gian nào?",
+                    "buttons": [
+                        {
+                            "type": "postback",
+                            "title": "7h sang",
+                            "payload": 'NOTIFICATION_7AM',
+                        },
+                        {
+                            "type": "postback",
+                            "title": "12h true",
+                            "payload": 'NOTIFICATION_12PM',
+                        },
+                        {
+                            "type": "postback",
+                            "title": "3h chieu",
+                            "payload": 'NOTIFICATION_3PM',
+                        },
+                    ]
+                }
+            }
+        })
