@@ -85,10 +85,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
+    'rest_framework_swagger',
 
     'accounts',
     'common',
     'accountkit',
+    'news',
 ]
 
 MIDDLEWARE_CLASSES = [

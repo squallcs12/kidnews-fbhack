@@ -1,5 +1,6 @@
 import requests
 from django.conf import settings
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,6 +10,8 @@ from accounts.models import User
 
 
 class AuthenticateView(APIView):
+    permission_classes = (AllowAny,)
+
     def post(self, request):
         """
         Facebook account kit authenticate

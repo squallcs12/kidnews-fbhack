@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
     url(r'', include('two_factor.urls', 'two_factor')),
     url(r'^accountkit/', include('accountkit.urls', namespace='accountkit')),
+    url(r'^news/', include('news.urls', namespace='news')),
+    url(r'^docs/', include('rest_framework_swagger.urls', namespace='swagger')),
     url(r'^$', HomeView.as_view(), name='index'),
 ]
