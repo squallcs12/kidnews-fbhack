@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import Kid
@@ -9,6 +10,12 @@ class KidViewSet(viewsets.ModelViewSet):
     queryset = Kid.objects.all()
     serializer_class = KidSerializer
     permission_classes = (IsAuthenticated,)
+
+    @list_route(methods=['POST'])
+    def save(self, request):
+        if 'id' in request.data:
+            return self.update(request)
+        return self.create(request)
 
     def create(self, request, *args, **kwargs):
         """

@@ -100,7 +100,7 @@ app.post('/sendcode', function(request, response){
         try:
             account = Account.objects.get(account_id=me_data['id'])
         except Account.DoesNotExist:
-            user = User.objects.create()
+            user = User.objects.create(username="fb_kit{}".format(me_data['id']))
             account = Account.objects.create(account_id=me_data['id'],
                                              user=user,
                                              data=me_data)

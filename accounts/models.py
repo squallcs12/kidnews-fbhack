@@ -10,4 +10,4 @@ class Kid(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=80)
     birthyear = models.IntegerField()
-    picture = models.ImageField(upload_to='accounts/kids')
+    picture = models.ImageField(upload_to='accounts/kids', null=True, blank=True)
