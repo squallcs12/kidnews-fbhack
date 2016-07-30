@@ -19,3 +19,6 @@ class Message(models.Model):
     user = models.ForeignKey(User)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_from_author(self):
+        return self.user == self.article.author

@@ -40,6 +40,9 @@ default = {
     'PAGE_MSG_VALIDATION_TOKEN': (str, 'PAGE_MSG_VALIDATION_TOKEN'),
     'PAGE_MSG_ACCESS_TOKEN': (str, 'PAGE_MSG_ACCESS_TOKEN'),
     'DEFAULT_FILE_STORAGE': (str, 'django.core.files.storage.FileSystemStorage'),
+    'PUSHER_APP_ID': (str, ''),
+    'PUSHER_APP_KEY': (str, ''),
+    'PUSHER_APP_SECRET': (str, ''),
 }
 
 env = environ.Env(**default)
@@ -185,3 +188,6 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
+PUSHER_APP_ID = env('PUSHER_APP_ID')
+PUSHER_APP_KEY = env('PUSHER_APP_KEY')
+PUSHER_APP_SECRET = env('PUSHER_APP_SECRET')

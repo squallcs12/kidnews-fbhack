@@ -6,4 +6,4 @@ from news.models import Message
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ('id', 'content', 'article', 'user', 'created_at')
+        fields = ('id', 'content', 'article', 'user', 'created_at', 'is_from_author')
