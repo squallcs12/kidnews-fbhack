@@ -12,10 +12,13 @@ class KidViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     @list_route(methods=['POST'])
-    def save(self, request):
+    def save(self, request, *args, **kwargs):
         if 'id' in request.data:
-            return self.update(request)
-        return self.create(request)
+            self.kwargs.update({
+                'pk': request.data['id'],
+            })
+            return self.update(request, *args, **kwargs)
+        return self.create(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         """
