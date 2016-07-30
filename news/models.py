@@ -1,3 +1,5 @@
+import bleach
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -21,10 +23,21 @@ class Category(models.Model):
         return self.name
 
 
+class SafeHtmlField(RichTextUploadingField):
+    def to_python(self, value):
+        value = super(SafeHtmlField, self).to_python(value)
+        tags = ['*']
+        attributes = {
+            '*': '*'
+        }
+        styles = ['*']
+        return bleach.clean(value, tags=tags, attributes=attributes, styles=styles)
+
+
 class Article(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=255)
-    content = models.TextField(default='')
+    content = SafeHtmlField(default='')
     infographic = models.ImageField(default='', null=True, blank=True, upload_to='news/article')
     comic = models.ImageField(default='', null=True, blank=True, upload_to='news/article')
     question = models.CharField(max_length=255, default='')

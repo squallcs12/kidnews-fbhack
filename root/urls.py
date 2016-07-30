@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^news/', include('news.urls', namespace='news')),
     url(r'^docs/', include('rest_framework_swagger.urls', namespace='swagger')),
     url(r'^messages/', include('fbmessages.urls', namespace='fbmessages')),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^$', HomeView.as_view(), name='index'),
 ]
 

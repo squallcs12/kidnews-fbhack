@@ -95,6 +95,8 @@ INSTALLED_APPS = [
     'accountkit',
     'news',
     'fbmessages',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -209,3 +211,5 @@ ACCOUNT_KIT_APP_SECRET = env('ACCOUNT_KIT_APP_SECRET')
 ACCOUNT_KIT_APP_ID = env('ACCOUNT_KIT_APP_ID')
 FACEBOOK_APP_ID = AUTH_FACEBOOK_KEY
 PAGE_MSG_ACCESS_TOKEN = env('PAGE_MSG_ACCESS_TOKEN')
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
