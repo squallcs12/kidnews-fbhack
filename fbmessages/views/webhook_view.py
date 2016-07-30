@@ -59,6 +59,13 @@ class WebhookView(APIView):
     def get_sender_id(self, message):
         return message['sender']['id']
 
+    def send_last_article_notification(self, sender_id):
+        article = Article.objects.all().order_by('id').first()
+        if article:
+            notify_new_article_on_fbmessage.delay(article.id,
+                                                  self.request.build_absolute_uri('/'),
+                                                  facebook_id=sender_id)
+
     def handle_account_linking(self, message):
         sender_id = self.get_sender_id(message)
         account_linking = message['account_linking']
@@ -68,11 +75,7 @@ class WebhookView(APIView):
         user = Account.objects.get(key=authorization_code).user
         if status == 'linked':
             FacebookUser.objects.create(user=user, facebook_id=sender_id)
-            article = Article.objects.all().order_by('id').first()
-            if article:
-                notify_new_article_on_fbmessage.delay(article.id,
-                                                      self.request.build_absolute_uri('/'),
-                                                      facebook_id=sender_id)
+            self.send_last_article_notification(sender_id)
             message_service.send_notification_settings_message(sender_id)
         elif status == 'unlinked':
             fb_user = FacebookUser.objects.get(facebook_id=sender_id)
@@ -112,7 +115,7 @@ class WebhookView(APIView):
             facebook_user = FacebookUser.objects.get(facebook_id=sender_id)
             facebook_user.notification_time = notification_time
             facebook_user.save()
-            message_service.send_text_message(sender_id, "Ok. {} nhe.".format(notification_time))
+            message_service.send_text_message(sender_id, "Ok. {}h nhe. Nhung ban cung co the xem tin moi bang cach nhan tin \"tin moi\".".format(notification_time))
         except FacebookUser.DoesNotExist:
             self.send_login_button(sender_id)
 
@@ -132,6 +135,8 @@ class WebhookView(APIView):
             self.send_login_button(sender_id)
         elif message_text == 'notification':
             message_service.send_notification_settings_message(sender_id)
+        elif message_text == 'tin moi':
+            self.send_last_article_notification(sender_id)
         else:
             message_service.send_text_message(sender_id, message_text)
 
