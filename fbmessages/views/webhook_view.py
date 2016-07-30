@@ -73,6 +73,7 @@ class WebhookView(APIView):
                 notify_new_article_on_fbmessage.delay(article.id,
                                                       self.request.build_absolute_uri('/'),
                                                       facebook_id=sender_id)
+            message_service.send_notification_settings_message(sender_id)
         elif status == 'unlinked':
             fb_user = FacebookUser.objects.get(facebook_id=sender_id)
             fb_user.delete()
