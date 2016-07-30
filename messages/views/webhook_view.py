@@ -98,7 +98,7 @@ class WebhookView(APIView):
         @return:
         """
         if self.is_from_facebook():
-            logger.info(request.data)
+            logger.warning(request.data)
             obj = request.data.get('object', '')
             if obj == 'page':
                 self.handle_page(request.data)
