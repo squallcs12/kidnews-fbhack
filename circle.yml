@@ -1,0 +1,13 @@
+machine:
+  python:
+    version: 3.4.3
+  environment:
+    RDS_DBNAME: circle_test
+    RDS_USERNAME: ubuntu
+    RDS_HOSTNAME: localhost
+
+test:
+  override:
+    - coverage run manage.py test $TEST_COMMAND_EXTENDS
+  post:
+    - python scripts/coverage_script.py

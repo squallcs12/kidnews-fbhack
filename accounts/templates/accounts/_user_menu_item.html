@@ -1,0 +1,4 @@
+{% load i18n common_filters %}
+<li {% if request|is_current_page:url_name %} class="active" {% endif %}>
+  <a href="{% url url_name %}">{% trans item_name %}</a>
+</li>

@@ -1,0 +1,45 @@
+{% extends "accounts/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block head-link %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/css-social-buttons/1.2.0/css/zocial.min.css"/>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <h1>{% trans "Sign Up" %}</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="well">
+      <p>
+        {% url 'two_factor:login' as login_url %}
+        {% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}
+      </p>
+      <form class="signup form-horizontal" id="signup_form" method="post" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {% include 'general/form_render.html' %}
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <div class="form-group">
+          <div class="col-md-9 col-md-offset-3">
+            <button type="submit" class="btn btn-primary">{% trans "Sign Up" %} &raquo;</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% include '_account_social_login.html' %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+/env
+local_settings.py
+*.pyc
+.project
+.settings/
+.pydevproject
+.idea/
+db.sqlite3
+env.sh
+.coverage
+htmlcov/
+/static/
+.env

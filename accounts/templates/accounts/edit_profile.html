@@ -1,0 +1,26 @@
+{% extends "accounts/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans 'Your profile' %}{% endblock %}
+
+{% block accounts-content %}
+<div class="profile-page">
+  <h3>{% blocktrans with username=user.username %}{{ username }} profile {% endblocktrans %}</h3>
+
+  <div class="row">
+    <form method="post" id="change_password_form" class="form-horizontal"
+          action="{% url 'accounts:edit_profile' %}">
+      {% csrf_token %}
+      <fieldset>
+        <legend>{% trans 'Edit profile' %}</legend>
+        {% include "general/form_render.html" %}
+        <div class="form-group">
+          <div class="col-lg-9 col-lg-offset-3">
+            <button type="submit" id="id_update_profile" class="btn btn-primary">{% trans 'Update profile' %}</button>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+{% endblock %}

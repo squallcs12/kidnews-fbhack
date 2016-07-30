@@ -1,0 +1,14 @@
+{% load i18n %}
+
+<div class="col-lg-6">
+  <div class="well">
+    {% if not user.is_authenticated %}
+    <p>{% trans 'Or log in with your social network account:' %}</p>
+    {% else %}
+    <p>{% trans 'Associate your account with social network account:' %}</p>
+    {% endif %}
+    <div id="social_login">
+      {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+    </div>
+  </div>
+</div>

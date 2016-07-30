@@ -1,0 +1,2 @@
+[report]
+omit = */migrations/*,*/.virtualenvs/*,common/tests/core.py,common/templatetags/*

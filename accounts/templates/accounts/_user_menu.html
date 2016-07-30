@@ -1,0 +1,31 @@
+{% load i18n common_filters %}
+<div class="top-buttons text-right">
+  <a href="#" data-click="expand">{% trans "Expand all" %}</a>
+  |
+  <a href="#" data-click="collapse">{% trans "Collapse all" %}</a>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <a data-toggle="collapse" href="#accountMenuBody">
+      {% trans "Accounts" %}
+    </a>
+  </div>
+  <div id="accountMenuBody" class="panel-collapse collapse">
+    <div class="panel-body">
+      <ul class="nav nav-pills nav-stacked">
+        {% include "accounts/_user_menu_item.html" with url_name='accounts:profile' item_name='Profile' %}
+
+        {% if user.has_usable_password %}
+          {% include "accounts/_user_menu_item.html" with url_name='account_change_password' item_name='Change password' %}
+        {% else %}
+          {% include "accounts/_user_menu_item.html" with url_name='account_set_password' item_name='Set password' %}
+        {% endif %}
+
+        {% include "accounts/_user_menu_item.html" with url_name='socialaccount_connections' item_name='Social connection' %}
+
+        {% include "accounts/_user_menu_item.html" with url_name='two_factor:profile' item_name='Two-factor settings' %}
+
+      </ul>
+    </div>
+  </div>
+</div>
