@@ -13,12 +13,18 @@ EMOTIONS = (
 )
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=80)
+
+
 class Article(models.Model):
-    author = models.ForeignKey(User)
+    user = models.ForeignKey(User)
     title = models.CharField(max_length=255)
     content = models.TextField(default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    categories = models.ManyToManyField(Category)
+    quick_view_image = models.ImageField(upload_to='news/article', blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -44,7 +50,7 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def is_from_author(self):
-        return self.user == self.article.author
+        return self.user == self.article.user
 
 
 class Emotion(models.Model):

@@ -80,14 +80,14 @@ class WebhookView(APIView):
                     "text": "What do you want to do next?",
                     "buttons": [
                         {
-                            "type": "web_url",
-                            "url": "https://petersapparel.parseapp.com",
-                            "title": "Show Website"
+                            "type": "postback",
+                            "title": "Login",
+                            "payload": "USER_PRESS_LOGIN",
                         },
                         {
                             "type": "postback",
-                            "title": "Start Chatting",
-                            "payload": "USER_DEFINED_PAYLOAD"
+                            "title": "Not now",
+                            "payload": "USER_NOT_LOGIN",
                         }
                     ]
                 }

@@ -22,7 +22,7 @@ class MessageAdmin(admin.ModelAdmin):
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'author', 'messages')
+    list_display = ('id', 'title', 'user', 'messages')
 
     def messages(self, obj):
         return '<a href="{}">Messages</a>'.format(reverse('admin:news_article_messages', args=(obj.id,)))
