@@ -70,11 +70,25 @@ class WebhookView(APIView):
             fb_user = FacebookUser.objects.get(facebook_id=sender_id)
             fb_user.delete()
 
+    def send_login_button(self, sender_id):
+        message_service.send_login_button(sender_id, self.build_absolute_uri(reverse('accountkit:login')))
+
     def handle_postback(self, message):
         sender_id = self.get_sender_id(message)
         payload = message['postback']['payload']
         if payload == USER_PRESS_LOGIN:
-            message_service.send_login_button(sender_id, self.build_absolute_uri(reverse('accountkit:login')))
+            self.send_login_button(sender_id)
+        elif payload.split('_')[0] == 'NOTIFICATION':
+            self.handle_postback_notification(sender_id, payload)
+
+    def handle_postback_notification(self, sender_id, payload):
+        notification_time = payload.split('_')[1]
+        try:
+            facebook_user = FacebookUser.objects.get(facebook_id=sender_id)
+            facebook_user.notification_time = notification_time
+            facebook_user.save()
+        except FacebookUser.DoesNotExist:
+            self.send_login_button(sender_id)
 
     def build_absolute_uri(self, page):
         if getattr(self, 'request', None):

@@ -96,17 +96,17 @@ class MessageService:
                         {
                             "type": "postback",
                             "title": "7h sang",
-                            "payload": 'NOTIFICATION_7AM',
+                            "payload": 'NOTIFICATION_07',
                         },
                         {
                             "type": "postback",
                             "title": "12h true",
-                            "payload": 'NOTIFICATION_12PM',
+                            "payload": 'NOTIFICATION_12',
                         },
                         {
                             "type": "postback",
                             "title": "3h chieu",
-                            "payload": 'NOTIFICATION_3PM',
+                            "payload": 'NOTIFICATION_15',
                         },
                     ]
                 }
