@@ -24,10 +24,10 @@ def send_message(user_id, article_id, message):
 
 
 @app.task
-def notify_new_article_on_fbmessage(article_id, base_url):
+def notify_new_article_on_fbmessage(article_id, base_url, **user_filter):
     print(base_url)
     article = Article.objects.get(pk=article_id)
-    fb_user_ids = FacebookUser.objects.all().values_list('facebook_id', flat=True)
+    fb_user_ids = FacebookUser.objects.all().filter(**user_filter).values_list('facebook_id', flat=True)
     message_service = MessageService()
     for fb_user_id in fb_user_ids:
         message_service.send_text_message(fb_user_id, 'Tin tức mới nhất cho con ban là "{}"'.format(article.title))
@@ -77,4 +77,4 @@ def daily_notification():
     now = timezone.now()
     yesterday = now - timedelta(days=1)
     article = Article.objects.filter(created_at__gte=yesterday).first()
-    notify_new_article_on_fbmessage(article.id, settings.BASE_URL)
+    notify_new_article_on_fbmessage(article.id, settings.BASE_URL, notification_time=now.hour)

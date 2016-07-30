@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 from accountkit.models import Account
 from fbmessages.models import FacebookUser
 from fbmessages.services.message_service import MessageService
+from news.models import Article
+from news.tasks import notify_new_article_on_fbmessage
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +68,11 @@ class WebhookView(APIView):
         user = Account.objects.get(key=authorization_code).user
         if status == 'linked':
             FacebookUser.objects.create(user=user, facebook_id=sender_id)
+            article = Article.objects.all().order_by('id').first()
+            if article:
+                notify_new_article_on_fbmessage.delay(article.id,
+                                                      self.request.build_absolute_uri('/'),
+                                                      facebook_id=sender_id)
         elif status == 'unlinked':
             fb_user = FacebookUser.objects.get(facebook_id=sender_id)
             fb_user.delete()
