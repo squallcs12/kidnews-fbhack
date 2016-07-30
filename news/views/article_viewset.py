@@ -1,9 +1,10 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from news.models import Article, Message, UserEmotion
+from news.models import Article, Message, UserEmotion, Art
+from news.serializers.art_serializer import ArtSerializer
 from news.serializers.article_serializer import ArticleSerializer
 
 
@@ -58,3 +59,29 @@ class ArticleViewSet(viewsets.ModelViewSet):
             'emotions': article.emotions(),
             'user_emotion': emotion,
         })
+
+    @detail_route(methods=['POST'])
+    def art(self, request, pk):
+        """
+
+        @param request:
+        @param pk:
+        @return:
+        ---
+        serializer: news.serializers.art_serializer.ArtSerializer
+        parameters:
+            - name: picture
+              type: file
+              required: true
+        """
+        article = self.get_object()
+        user_art, created = Art.objects.get_or_create(user=request.user, article=article)
+        serializer = ArtSerializer(instance=user_art, data=request.data, context={
+            'request': request,
+        })
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+
+        return Response(serializer.data)

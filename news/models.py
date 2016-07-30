@@ -64,12 +64,18 @@ class Article(models.Model):
         except UserEmotion.DoesNotExist:
             return 0
 
+    def get_user_art(self, user):
+        try:
+            return self.art_set.get(user=user).picture.url
+        except Art.DoesNotExist:
+            return ''
+
     def get_content_link(self):
         return reverse('news:article_content', args=(self.id, ))
 
 
 def article_directory_path(instance, filename):
-    return "news/article/art/{}/{}".format(instance.id, filename)
+    return "news/article/art/{}/{}".format(instance.user.id, filename)
 
 
 class Art(models.Model):

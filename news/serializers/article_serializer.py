@@ -7,11 +7,16 @@ from news.serializers.message_serializer import MessageSerializer
 class ArticleSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, source='message_set')
     user_emotion = serializers.SerializerMethodField()
+    user_art = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
 
     def get_user_emotion(self, article):
         request = self.context['request']
         return article.get_user_emotion(request.user)
+
+    def get_user_art(self, article):
+        request = self.context['request']
+        return self.build_absolute_uri(article.get_user_art(request.user))
 
     def build_absolute_uri(self, url):
         request = self.context['request']
@@ -32,4 +37,4 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Article
         fields = ('id', 'title', 'content', 'user', 'created_at', 'updated_at', 'messages', 'user_emotion', 'emotions',
                   'categories', 'quick_view_image',
-                  'question', 'answer', 'infographic', 'comic')
+                  'question', 'answer', 'infographic', 'comic', 'user_art')
