@@ -85,10 +85,12 @@ class WebhookView(APIView):
             self.handle_like_confirm(sender_id, payload_parts)
 
     def send_happy_message(self, sendder_id):
-        message_service.send_text_message(sendder_id, ':) . Hihi.')
+        message_service.send_text_message(sendder_id, ':)')
+        message_service.send_text_message(sendder_id, 'Hi hi. Cam on ban nhieu')
 
     def send_sad_message(self, sendder_id):
-        message_service.send_text_message(sendder_id, ':( . Chung toi rat tiec.')
+        message_service.send_text_message(sendder_id, ':(')
+        message_service.send_text_message(sendder_id, 'Minh rat tiec.')
 
     def handle_like_confirm(self, sendder_id, payload_parts):
         if payload_parts[1] == 'LIKE':
