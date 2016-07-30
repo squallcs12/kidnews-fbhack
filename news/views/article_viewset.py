@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from news.models import Article, Message, UserEmotion, Art
 from news.serializers.art_serializer import ArtSerializer
 from news.serializers.article_serializer import ArticleSerializer
+from news.tasks import notify_new_chat_on_fbmessage, notify_new_art_on_fbmessage
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
@@ -29,7 +30,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
         article = self.get_object()
         message_text = request.data['content']
         message = Message.objects.create(user=request.user, content=message_text, article=article, to_user=article.user)
-
+        notify_new_chat_on_fbmessage.apply_async([article.id, request.user.id], countdown=2)
         return Response({
             'success': True,
         })
@@ -83,5 +84,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
+
+        notify_new_art_on_fbmessage.apply_async([article.id, request.user.id], countdown=2)
 
         return Response(serializer.data)

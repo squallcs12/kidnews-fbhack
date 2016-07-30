@@ -53,3 +53,17 @@ def notify_new_chat_on_fbmessage(article_id, user_id):
         message = ("Bé vừa gửi một câu hỏi cho biên tập của KIDNEWS. Hình như bé rất thích tin \"{}\"vừa đọc đó nha! "
                    "^^ Đúng không bạn?".format(article.title))
         message_service.send_like_confirm_message(facebook_user.facebook_id, message)
+
+
+@app.task
+def notify_new_art_on_fbmessage(article_id, user_id):
+    try:
+        facebook_user = FacebookUser.objects.get(user=user_id)
+    except FacebookUser.DoesNotExist:
+        return
+    else:
+        article = Article.objects.get(pk=article_id)
+        message_service = MessageService()
+        message = ("Bé vừa hoàn thành một bức tranh từ nội dung \"{}\". "
+                   "Ghé qua coi đi nào! Chắc bạn sẽ thích đó.".format(article.title))
+        message_service.send_like_confirm_message(facebook_user.facebook_id, message)
