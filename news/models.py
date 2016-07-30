@@ -26,11 +26,12 @@ class Category(models.Model):
 class SafeHtmlField(RichTextUploadingField):
     def to_python(self, value):
         value = super(SafeHtmlField, self).to_python(value)
-        tags = ['*']
+        tags = ['p', 'img']
         attributes = {
-            '*': '*'
+            'p': ['class'],
+            'img': ['alt', 'src', 'style']
         }
-        styles = ['*']
+        styles = ['width', 'height']
         return bleach.clean(value, tags=tags, attributes=attributes, styles=styles)
 
 
@@ -40,12 +41,13 @@ class Article(models.Model):
     content = SafeHtmlField(default='')
     infographic = models.ImageField(default='', null=True, blank=True, upload_to='news/article')
     comic = models.ImageField(default='', null=True, blank=True, upload_to='news/article')
-    question = models.CharField(max_length=255, default='')
-    answer = models.TextField(default='')
+    question = models.CharField(max_length=255, default='', blank=True)
+    answer = models.TextField(default='', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category)
     quick_view_image = models.ImageField(upload_to='news/article', blank=True, null=True)
+    additional_fb_message = models.CharField(max_length=255, default='', blank=True)
 
     def __str__(self):
         return self.title

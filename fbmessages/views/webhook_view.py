@@ -2,7 +2,6 @@ import hashlib
 import hmac
 import logging
 
-import requests
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
@@ -11,10 +10,12 @@ from rest_framework.views import APIView
 
 from accountkit.models import Account
 from fbmessages.models import FacebookUser
+from fbmessages.services.message_service import MessageService
 
 logger = logging.getLogger(__name__)
 
 USER_PRESS_LOGIN = 'USER_PRESS_LOGIN'
+message_service = MessageService()
 
 
 class WebhookView(APIView):
@@ -73,29 +74,12 @@ class WebhookView(APIView):
         sender_id = self.get_sender_id(message)
         payload = message['postback']['payload']
         if payload == USER_PRESS_LOGIN:
-            self.send_login_button(sender_id)
+            message_service.send_login_button(sender_id, self.build_absolute_uri(reverse('accountkit:login')))
 
     def build_absolute_uri(self, page):
         if getattr(self, 'request', None):
             return self.request.build_absolute_uri(page)
         return 'http://localhost:8000' + page
-
-    def send_login_button(self, recepient_id):
-        self.send_message(recepient_id, {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "generic",
-                    "elements": [{
-                        "title": "Please press bellow button to login",
-                        "buttons": [{
-                            "type": "account_link",
-                            "url": self.build_absolute_uri(reverse('accountkit:login')),
-                        }],
-                    }]
-                }
-            }
-        })
 
     def handle_received_message(self, message):
         """
@@ -104,73 +88,14 @@ class WebhookView(APIView):
         """
         sender_id = self.get_sender_id(message)
         if not self.sender_is_first_time(sender_id):
-            self.send_text_message(sender_id, message['message']['text'])
+            message_service.send_text_message(sender_id, message['message']['text'])
 
     def sender_is_first_time(self, sender_id):
         try:
             fbuser = FacebookUser.objects.get(pk=sender_id)
         except FacebookUser.DoesNotExist:
-            self.send_login_options(sender_id)
+            message_service.send_login_options(sender_id)
             return True
-
-    def send_message(self, recipient_id, message):
-        message_data = {
-            'recipient': {
-                'id': recipient_id
-            },
-            'message': message,
-        }
-
-        self.call_send_api(message_data)
-
-    def send_login_options(self, recipient_id):
-        self.send_message(recipient_id, {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "button",
-                    "text": "What do you want to do next?",
-                    "buttons": [
-                        {
-                            "type": "postback",
-                            "title": "Login",
-                            "payload": USER_PRESS_LOGIN,
-                        },
-                        {
-                            "type": "postback",
-                            "title": "Not now",
-                            "payload": "USER_NOT_LOGIN",
-                        }
-                    ]
-                }
-            }
-        })
-
-    def send_text_message(self, recipient_id, message):
-        self.send_message(recipient_id, {
-            'text': message
-        })
-
-    @property
-    def send_api_endpoint(self):
-        return 'https://graph.facebook.com/v2.6/me/messages?access_token={}'.format(settings.PAGE_MSG_ACCESS_TOKEN)
-
-    def call_send_api(self, data):
-        """
-        @param data:
-        @return:
-        """
-        response = requests.post(self.send_api_endpoint, json=data)
-        if response.status_code == 200:
-            response_json = response.json()
-            recipient_id = response_json['recipient_id']
-            message_id = response_json['message_id']
-
-            logger.info("Successfully sent generic message with "
-                        "id {} to recipient {}".format(message_id, recipient_id))
-        else:
-            logger.warning("Unable to send message.")
-            logger.warning(response.content)
 
     def is_from_facebook(self):
         signature = 'sha1=' + hmac.new(settings.ACCOUNT_KIT_APP_ID.encode('utf-8'),
