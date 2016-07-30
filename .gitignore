@@ -11,3 +11,4 @@ env.sh
 htmlcov/
 /static/
 .env
+/media/

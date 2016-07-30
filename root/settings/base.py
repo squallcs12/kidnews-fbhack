@@ -171,6 +171,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = 'media'
 
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -191,3 +193,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 PUSHER_APP_ID = env('PUSHER_APP_ID')
 PUSHER_APP_KEY = env('PUSHER_APP_KEY')
 PUSHER_APP_SECRET = env('PUSHER_APP_SECRET')
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+    )
+}
