@@ -112,3 +112,26 @@ class MessageService:
                 }
             }
         })
+
+    def send_like_confirm_message(self, recepient_id, message):
+        self.send_message(recepient_id, {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": message,
+                    "buttons": [
+                        {
+                            "type": "postback",
+                            "title": "Thich",
+                            "payload": 'LIKECONFIRM_LIKE',
+                        },
+                        {
+                            "type": "postback",
+                            "title": "Khong thich",
+                            "payload": 'LIKECONFIRM_NOTLIKE',
+                        },
+                    ]
+                }
+            }
+        })

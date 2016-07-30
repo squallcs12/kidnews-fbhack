@@ -28,6 +28,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
         article = self.get_object()
         message_text = request.data['content']
         message = Message.objects.create(user=request.user, content=message_text, article=article, to_user=article.user)
+
         return Response({
             'success': True,
         })

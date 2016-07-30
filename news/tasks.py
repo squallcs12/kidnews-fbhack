@@ -1,6 +1,7 @@
 from django.conf import settings
 from pusher.pusher import Pusher
 
+from accounts.models import User
 from fbmessages.models import FacebookUser
 from fbmessages.services.message_service import MessageService
 from news.models import Article
@@ -38,3 +39,17 @@ def notify_new_article_on_fbmessage(article_id, base_url):
             })
         if article.additional_fb_message:
             message_service.send_text_message(fb_user_id, article.additional_fb_message)
+
+
+@app.task
+def notify_new_chat_on_fbmessage(article_id, user_id):
+    try:
+        facebook_user = FacebookUser.objects.get(user=user_id)
+    except FacebookUser.DoesNotExist:
+        return
+    else:
+        article = Article.objects.get(pk=article_id)
+        message_service = MessageService()
+        message = ("Bé vừa gửi một câu hỏi cho biên tập của KIDNEWS. Hình như bé rất thích tin \"{}\"vừa đọc đó nha! "
+                   "^^ Đúng không bạn?".format(article.title))
+        message_service.send_like_confirm_message(facebook_user.facebook_id, message)

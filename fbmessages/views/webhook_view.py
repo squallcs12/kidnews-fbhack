@@ -76,17 +76,33 @@ class WebhookView(APIView):
     def handle_postback(self, message):
         sender_id = self.get_sender_id(message)
         payload = message['postback']['payload']
+        payload_parts = payload.split('_')
         if payload == USER_PRESS_LOGIN:
             self.send_login_button(sender_id)
-        elif payload.split('_')[0] == 'NOTIFICATION':
-            self.handle_postback_notification(sender_id, payload)
+        elif payload_parts[0] == 'NOTIFICATION':
+            self.handle_postback_notification(sender_id, payload_parts)
+        elif payload_parts[0] == 'LIKECONFIRM':
+            self.handle_like_confirm(sender_id, payload_parts)
 
-    def handle_postback_notification(self, sender_id, payload):
-        notification_time = payload.split('_')[1]
+    def send_happy_message(self, sendder_id):
+        message_service.send_text_message(sendder_id, ':) . Hihi.')
+
+    def send_sad_message(self, sendder_id):
+        message_service.send_text_message(sendder_id, ':( . Chung toi rat tiec.')
+
+    def handle_like_confirm(self, sendder_id, payload_parts):
+        if payload_parts[1] == 'LIKE':
+            self.send_happy_message(sendder_id)
+        else:
+            self.send_sad_message(sendder_id)
+
+    def handle_postback_notification(self, sender_id, payload_parts):
+        notification_time = payload_parts[1]
         try:
             facebook_user = FacebookUser.objects.get(facebook_id=sender_id)
             facebook_user.notification_time = notification_time
             facebook_user.save()
+            message_service.send_message(sender_id, "Ok. {} nhe.".format(notification_time))
         except FacebookUser.DoesNotExist:
             self.send_login_button(sender_id)
 
