@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
     url(r'', include('two_factor.urls', 'two_factor')),
+    url(r'^accountkit/', include('accountkit.urls', namespace='accountkit')),
     url(r'^$', HomeView.as_view(), name='index'),
 ]

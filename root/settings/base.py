@@ -88,6 +88,7 @@ INSTALLED_APPS = [
 
     'accounts',
     'common',
+    'accountkit',
 ]
 
 MIDDLEWARE_CLASSES = [
