@@ -129,9 +129,11 @@ class WebhookView(APIView):
         sender_id = self.get_sender_id(message)
         message_text = message['message']['text']
         if message_text == 'login':
-            message_service.send_text_message(sender_id, message_text)
+            message_service.send_login_button(sender_id)
         elif message_text == 'notification':
             message_service.send_notification_settings_message(sender_id)
+        else:
+            message_service.send_text_message(sender_id, message_text)
 
     def sender_is_first_time(self, sender_id):
         try:
