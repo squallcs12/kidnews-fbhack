@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 
 from accounts.models import User
@@ -24,6 +25,10 @@ class Article(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=255)
     content = models.TextField(default='')
+    infographic = models.ImageField(default='', null=True, blank=True, upload_to='news/article')
+    comic = models.ImageField(default='', null=True, blank=True, upload_to='news/article')
+    question = models.CharField(max_length=255, default='')
+    answer = models.TextField(default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField(Category)
@@ -43,6 +48,22 @@ class Article(models.Model):
             return self.useremotion_set.get(user=user).emotion
         except UserEmotion.DoesNotExist:
             return 0
+
+    def get_content_link(self):
+        return reverse('news:article_content', args=(self.id, ))
+
+
+def article_directory_path(instance, filename):
+    return "news/article/art/{}/{}".format(instance.id, filename)
+
+
+class Art(models.Model):
+    article = models.ForeignKey(Article)
+    user = models.ForeignKey(User)
+    picture = models.ImageField(upload_to=article_directory_path)
+
+    class Meta:
+        unique_together = (('article', 'user'), )
 
 
 class Message(models.Model):
