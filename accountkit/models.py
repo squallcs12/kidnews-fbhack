@@ -10,7 +10,7 @@ class Account(models.Model):
     user = models.OneToOneField(User)
     account_id = models.CharField(max_length=40)
     data = models.TextField()
-    key = models.CharField(max_length=40, primary_key=True)
+    key = models.CharField(max_length=40, unique=True)
 
     def save(self, *args, **kwargs):
         if not self.key:

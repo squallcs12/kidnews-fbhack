@@ -11,6 +11,16 @@ from accounts.models import User
 class AuthenticateView(APIView):
     def post(self, request):
         """
+        Facebook account kit authenticate
+        @param request:
+        @return:
+        ---
+        response_serializer: accountkit.serializers.account_serializer.AccountSerializer
+        parameters:
+            - name: code
+              required: true
+        """
+        """
         function loadLoginSuccess() {
   return fs.readFileSync('dist/login_success.html').toString();
 }

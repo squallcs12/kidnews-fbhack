@@ -6,4 +6,4 @@ from accountkit.models import Account
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ('id', 'user', 'account_id', 'data', 'ket')
+        fields = ('id', 'user', 'account_id', 'data', 'key')
