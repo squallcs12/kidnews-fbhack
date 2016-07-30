@@ -4,6 +4,7 @@ import logging
 
 import requests
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.http.response import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -11,6 +12,8 @@ from rest_framework.views import APIView
 from fbmessages.models import FacebookUser
 
 logger = logging.getLogger(__name__)
+
+USER_PRESS_LOGIN = 'USER_PRESS_LOGIN'
 
 
 class WebhookView(APIView):
@@ -44,13 +47,44 @@ class WebhookView(APIView):
     def handle_message(self, message):
         if message.get('message'):
             self.handle_received_message(message)
+        if message.get('postback'):
+            self.handle_postback(message)
+
+    def get_sender_id(self, message):
+        return message['sender']['id']
+
+    def handle_postback(self, message):
+        sender_id = self.get_sender_id(message)
+        payload = message['postback']['payload']
+        if payload == USER_PRESS_LOGIN:
+            self.send_login_button(sender_id)
+
+    def build_absolute_uri(self, page):
+        return 'http://localhost:8000' + page
+
+    def send_login_button(self, recepient_id):
+        self.send_message(recepient_id, {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": [{
+                        "title": "Please press bellow button to login",
+                        "buttons": [{
+                            "type": "account_link",
+                            "url": self.build_absolute_uri(reverse('accountkit:login')),
+                        }],
+                    }]
+                }
+            }
+        })
 
     def handle_received_message(self, message):
         """
         @param message:
         @return:
         """
-        sender_id = message['sender']['id']
+        sender_id = self.get_sender_id(message)
         if not self.sender_is_first_time(sender_id):
             self.send_text_message(sender_id, message['message']['text'])
 
@@ -82,7 +116,7 @@ class WebhookView(APIView):
                         {
                             "type": "postback",
                             "title": "Login",
-                            "payload": "USER_PRESS_LOGIN",
+                            "payload": USER_PRESS_LOGIN,
                         },
                         {
                             "type": "postback",
