@@ -66,3 +66,4 @@ class ArticleAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Message, MessageAdmin)
 admin.site.register(models.Article, ArticleAdmin)
+admin.site.register(models.Category)
