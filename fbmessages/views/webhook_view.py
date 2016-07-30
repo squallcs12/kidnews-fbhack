@@ -62,7 +62,7 @@ class WebhookView(APIView):
         status = account_linking['status']
         authorization_code = account_linking.get('authorization_code')
 
-        user = Account.objects.get(key=authorization_code)
+        user = Account.objects.get(key=authorization_code).user
         if status == 'linked':
             FacebookUser.objects.create(user=user, facebook_id=sender_id)
         elif status == 'unlinked':
