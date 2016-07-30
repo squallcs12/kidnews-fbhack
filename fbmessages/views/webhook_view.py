@@ -148,7 +148,7 @@ class WebhookView(APIView):
                                        hashlib.sha1).hexdigest()
         if signature == self.request.META.get('HTTP_X_HUB_SIGNATURE'):
             return True
-        logger.warning(self.request.META)
+        logger.warning(self.request.META.get('HTTP_X_HUB_SIGNATURE'))
         logger.warning(signature)
         return True
 
@@ -158,7 +158,6 @@ class WebhookView(APIView):
         @return:
         """
         if self.is_from_facebook():
-            logger.warning(request.data)
             obj = request.data.get('object', '')
             if obj == 'page':
                 self.handle_page(request.data)
