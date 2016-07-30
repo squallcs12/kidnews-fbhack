@@ -3,6 +3,16 @@ from django.db import models
 from accounts.models import User
 
 
+EMOTIONS = (
+    (1, '1'),
+    (2, '2'),
+    (3, '3'),
+    (4, '4'),
+    (5, '5'),
+    (6, '6'),
+)
+
+
 class Article(models.Model):
     author = models.ForeignKey(User)
     title = models.CharField(max_length=255)
@@ -13,6 +23,18 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    def emotions(self):
+        emotions_dict = {x[0]: 0 for x in EMOTIONS}
+        emotions = self.emotion_set.all()
+        emotions_dict.update({x.emotion: x.total for x in emotions})
+        return emotions_dict
+
+    def get_user_emotion(self, user):
+        try:
+            return self.useremotion_set.get(user=user).emotion
+        except UserEmotion.DoesNotExist:
+            return 0
+
 
 class Message(models.Model):
     article = models.ForeignKey(Article)
@@ -22,3 +44,35 @@ class Message(models.Model):
 
     def is_from_author(self):
         return self.user == self.article.author
+
+
+class Emotion(models.Model):
+    article = models.ForeignKey(Article)
+    emotion = models.IntegerField(choices=EMOTIONS)
+    total = models.IntegerField(default=0)
+
+
+class UserEmotion(models.Model):
+    article = models.ForeignKey(Article)
+    user = models.ForeignKey(User)
+    emotion = models.IntegerField(choices=EMOTIONS)
+
+    def delete(self, using=None, keep_parents=False):
+        emotion = Emotion.objects.get(article=self.article, emotion=self.emotion)
+        emotion.total -= 1
+        emotion.save()
+
+        super(UserEmotion, self).delete(using, keep_parents)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if self.id:
+            # cancel update
+            return
+        emotion, created = Emotion.objects.get_or_create(article=self.article,
+                                                         emotion=self.emotion,
+                                                         defaults={'total': 1})
+        if not created:
+            emotion.total += 1
+            emotion.save()
+        super(UserEmotion, self).save(force_insert, force_update, using, update_fields)
