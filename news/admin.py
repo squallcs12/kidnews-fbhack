@@ -63,19 +63,6 @@ class ArticleAdmin(admin.ModelAdmin):
 
         return urlpatterns
 
-    def notify_parents(self, article, request):
-        notify_new_article_on_fbmessage.apply_async([article.id, request.build_absolute_uri('/')[:-1]], countdown=2)
-
-    def save_model(self, request, obj, form, change):
-        need_notify = False
-        if not obj.id:
-            need_notify = True
-
-        super(ArticleAdmin, self).save_model(request, obj, form, change)
-
-        if need_notify:
-            self.notify_parents(obj, request)
-
 
 admin.site.register(models.Message, MessageAdmin)
 admin.site.register(models.Article, ArticleAdmin)

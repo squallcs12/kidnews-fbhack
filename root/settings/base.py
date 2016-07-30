@@ -14,6 +14,7 @@ import os
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from celery.schedules import crontab
 from django.core.urlresolvers import reverse_lazy
 
 
@@ -43,6 +44,7 @@ default = {
     'PUSHER_APP_ID': (str, ''),
     'PUSHER_APP_KEY': (str, ''),
     'PUSHER_APP_SECRET': (str, ''),
+    'BASE_URL': (str, 'http://localhost:8000'),
 }
 
 env = environ.Env(**default)
@@ -52,6 +54,7 @@ env.read_env('.env')
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 root = environ.Path(__file__) - 3
 BASE_DIR = root()
+BASE_URL = env('BASE_URL')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -213,3 +216,11 @@ FACEBOOK_APP_ID = AUTH_FACEBOOK_KEY
 PAGE_MSG_ACCESS_TOKEN = env('PAGE_MSG_ACCESS_TOKEN')
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
+CELERY_TIMEZONE = 'Asia/Ho_Chi_Minh'
+CELERYBEAT_SCHEDULE = {
+    'daily_notification_new_article': {
+        'task': 'news.tasks.daily_notification',
+        'schedule': crontab(),
+        'args': None,
+    },
+}

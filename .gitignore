@@ -12,3 +12,5 @@ htmlcov/
 /static/
 .env
 /media/
+celerybeat-schedule
+celerybeat.pid

@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.conf import settings
+from django.utils import timezone
 from pusher.pusher import Pusher
 
 from accounts.models import User
@@ -27,7 +30,7 @@ def notify_new_article_on_fbmessage(article_id, base_url):
     fb_user_ids = FacebookUser.objects.all().values_list('facebook_id', flat=True)
     message_service = MessageService()
     for fb_user_id in fb_user_ids:
-        message_service.send_text_message(fb_user_id, 'Ok. Tin tức mới nhất cho con ban là "{}"'.format(article.title))
+        message_service.send_text_message(fb_user_id, 'Tin tức mới nhất cho con ban là "{}"'.format(article.title))
         if article.quick_view_image:
             message_service.send_message(fb_user_id, {
                 "attachment": {
@@ -67,3 +70,11 @@ def notify_new_art_on_fbmessage(article_id, user_id):
         message = ("Bé vừa hoàn thành một bức tranh từ nội dung \"{}\". "
                    "Ghé qua coi đi nào! Chắc bạn sẽ thích đó.".format(article.title))
         message_service.send_like_confirm_message(facebook_user.facebook_id, message)
+
+
+@app.task
+def daily_notification():
+    now = timezone.now()
+    yesterday = now - timedelta(days=1)
+    article = Article.objects.filter(created_at__gte=yesterday).first()
+    notify_new_article_on_fbmessage(article.id, settings.BASE_URL)
