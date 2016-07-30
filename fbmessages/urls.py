@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from messages.views.webhook_view import WebhookView
+from fbmessages.views.webhook_view import WebhookView
 
 
 urlpatterns = [

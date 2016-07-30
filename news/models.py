@@ -39,6 +39,7 @@ class Article(models.Model):
 class Message(models.Model):
     article = models.ForeignKey(Article)
     user = models.ForeignKey(User)
+    to_user = models.ForeignKey(User, related_name='to_users')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

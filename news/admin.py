@@ -14,11 +14,11 @@ from news.tasks import send_message
 
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'article')
+    list_display = ('id', 'article', 'user', 'to_user', 'content')
 
     def save_model(self, request, obj, form, change):
         super(MessageAdmin, self).save_model(request, obj, form, change)
-        send_message.delay(request.user.id, obj.article.id, obj.content)
+        send_message.delay(obj.to_user.id, obj.article.id, obj.content)
 
 
 class ArticleAdmin(admin.ModelAdmin):

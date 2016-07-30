@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^accountkit/', include('accountkit.urls', namespace='accountkit')),
     url(r'^news/', include('news.urls', namespace='news')),
     url(r'^docs/', include('rest_framework_swagger.urls', namespace='swagger')),
-    url(r'^messages/', include('messages.urls', namespace='messages')),
+    url(r'^messages/', include('fbmessages.urls', namespace='fbmessages')),
     url(r'^$', HomeView.as_view(), name='index'),
 ]
 

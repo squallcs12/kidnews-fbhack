@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'common',
     'accountkit',
     'news',
+    'fbmessages',
 ]
 
 MIDDLEWARE_CLASSES = [

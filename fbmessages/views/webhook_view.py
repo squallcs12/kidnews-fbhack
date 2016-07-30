@@ -8,11 +8,13 @@ from django.http.response import HttpResponse, HttpResponseForbidden, HttpRespon
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+from fbmessages.models import FacebookUser
+
 logger = logging.getLogger(__name__)
 
 
 class WebhookView(APIView):
-    permission_classes = (AllowAny, )
+    permission_classes = (AllowAny,)
 
     def get(self, request):
         """
@@ -49,19 +51,53 @@ class WebhookView(APIView):
         @return:
         """
         sender_id = message['sender']['id']
-        self.send_text_message(sender_id, message['message']['text'])
+        if not self.sender_is_first_time(sender_id):
+            self.send_text_message(sender_id, message['message']['text'])
 
-    def send_text_message(self, recipient_id, message):
+    def sender_is_first_time(self, sender_id):
+        try:
+            fbuser = FacebookUser.objects.get(pk=sender_id)
+        except FacebookUser.DoesNotExist:
+            self.send_login_options(sender_id)
+            return True
+
+    def send_message(self, recipient_id, message):
         message_data = {
             'recipient': {
                 'id': recipient_id
             },
-            'message': {
-                'text': message
-            }
+            'message': message,
         }
 
         self.call_send_api(message_data)
+
+    def send_login_options(self, recipient_id):
+        self.send_message(recipient_id, {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": "What do you want to do next?",
+                    "buttons": [
+                        {
+                            "type": "web_url",
+                            "url": "https://petersapparel.parseapp.com",
+                            "title": "Show Website"
+                        },
+                        {
+                            "type": "postback",
+                            "title": "Start Chatting",
+                            "payload": "USER_DEFINED_PAYLOAD"
+                        }
+                    ]
+                }
+            }
+        })
+
+    def send_text_message(self, recipient_id, message):
+        self.send_message(recipient_id, {
+            'text': message
+        })
 
     @property
     def send_api_endpoint(self):
@@ -85,12 +121,14 @@ class WebhookView(APIView):
             logger.warning(response.content)
 
     def is_from_facebook(self):
-        return True
         signature = 'sha1=' + hmac.new(settings.ACCOUNT_KIT_APP_ID.encode('utf-8'),
                                        self.request.body,
                                        hashlib.sha1).hexdigest()
         if signature == self.request.META.get('HTTP_X_HUB_SIGNATURE'):
             return True
+        logger.warning(self.request.META)
+        logger.warning(signature)
+        return True
 
     def post(self, request):
         """
