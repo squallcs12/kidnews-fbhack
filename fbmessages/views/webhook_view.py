@@ -133,11 +133,12 @@ class WebhookView(APIView):
         """
         sender_id = self.get_sender_id(message)
         message_text = message['message']['text']
-        if message_text == 'login':
+        message_text_lower = message_text.lower()
+        if message_text_lower == 'login':
             self.send_login_button(sender_id)
-        elif message_text == 'notification':
+        elif message_text_lower == 'notification':
             message_service.send_notification_settings_message(sender_id)
-        elif message_text == 'tin moi':
+        elif message_text_lower == 'tin moi':
             self.send_last_article_notification(sender_id)
         else:
             message_service.send_text_message(sender_id, message_text)
