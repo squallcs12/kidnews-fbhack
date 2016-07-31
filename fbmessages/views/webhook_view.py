@@ -63,7 +63,7 @@ class WebhookView(APIView):
         article = Article.objects.all().order_by('id').first()
         if article:
             notify_new_article_on_fbmessage.delay(article.id,
-                                                  self.request.build_absolute_uri('/'),
+                                                  self.request.build_absolute_uri('/')[:-1],
                                                   facebook_id=sender_id)
 
     def handle_account_linking(self, message):
