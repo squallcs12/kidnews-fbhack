@@ -16,6 +16,7 @@ class MessageService:
             },
             'message': message,
         }
+        logger.warning(message_data)
 
         self.call_send_api(message_data)
 
