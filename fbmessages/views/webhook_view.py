@@ -74,7 +74,10 @@ class WebhookView(APIView):
 
         user = Account.objects.get(key=authorization_code).user
         if status == 'linked':
-            FacebookUser.objects.create(user=user, facebook_id=sender_id)
+            try:
+                FacebookUser.objects.create(user=user, facebook_id=sender_id)
+            except:
+                pass
             self.send_last_article_notification(sender_id)
             message_service.send_notification_settings_message(sender_id)
         elif status == 'unlinked':
