@@ -1,3 +1,4 @@
+from django.db.models.query_utils import Q
 from rest_framework import serializers
 
 from news.models import Article
@@ -5,10 +6,15 @@ from news.serializers.message_serializer import MessageSerializer
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    messages = MessageSerializer(many=True, source='message_set')
+    messages = serializers.SerializerMethodField()
     user_emotion = serializers.SerializerMethodField()
     user_art = serializers.SerializerMethodField()
     content = serializers.SerializerMethodField()
+
+    def get_messages(self, article):
+        user = self.context['request'].user
+        messages = article.message_set.filter(Q(user=user) | Q(to_user=user))
+        return MessageSerializer(messages, many=True).data
 
     def get_user_emotion(self, article):
         request = self.context['request']
