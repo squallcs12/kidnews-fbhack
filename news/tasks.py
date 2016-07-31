@@ -35,7 +35,7 @@ def notify_new_article_on_fbmessage(article_id, base_url, facebook_id=None, **us
     for fb_user_id in fb_user_ids:
         message_service.send_text_message(fb_user_id, 'Tin tức mới nhất cho con ban là "{}"'.format(article.title))
         image_url = article.quick_view_image.url
-        if image_url.startswith("http"):
+        if not image_url.startswith("http"):
             image_url = base_url + image_url
         if article.quick_view_image:
             message_service.send_message(fb_user_id, {
