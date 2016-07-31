@@ -2,6 +2,7 @@ import logging
 
 import requests
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +36,10 @@ class MessageService:
             recipient_id = response_json['recipient_id']
             message_id = response_json['message_id']
 
-            logger.info("Successfully sent generic message with "
-                        "id {} to recipient {}".format(message_id, recipient_id))
+            logger.info(_("Successfully sent generic message with "
+                          "id {} to recipient {}").format(message_id, recipient_id))
         else:
-            logger.warning("Unable to send message.")
+            logger.warning(_("Unable to send message."))
             logger.warning(response.content)
 
     def send_login_options(self, recipient_id):
@@ -47,16 +48,16 @@ class MessageService:
                 "type": "template",
                 "payload": {
                     "template_type": "button",
-                    "text": "Please login to continue.",
+                    "text": _("Please login to continue."),
                     "buttons": [
                         {
                             "type": "postback",
-                            "title": "Login",
+                            "title": _("Login"),
                             "payload": USER_PRESS_LOGIN,
                         },
                         {
                             "type": "postback",
-                            "title": "Not now",
+                            "title": _("Not now"),
                             "payload": "USER_NOT_LOGIN",
                         }
                     ]
@@ -76,7 +77,7 @@ class MessageService:
                 "payload": {
                     "template_type": "generic",
                     "elements": [{
-                        "title": "Please press bellow button to login",
+                        "title": _("Please press bellow button to login"),
                         "buttons": [{
                             "type": "account_link",
                             "url": url,
@@ -92,21 +93,22 @@ class MessageService:
                 "type": "template",
                 "payload": {
                     "template_type": "button",
-                    "text": "Mỗi ngày bạn sẽ được thông báo tin mới. Bạn muốn được thông báo tin mới vào thời gian nào?",
+                    "text": _("Mỗi ngày bạn sẽ được thông báo tin mới. Bạn muốn được thông báo tin mới "
+                              "vào thời gian nào?"),
                     "buttons": [
                         {
                             "type": "postback",
-                            "title": "7h sang",
+                            "title": _("7h sáng"),
                             "payload": 'NOTIFICATION_07',
                         },
                         {
                             "type": "postback",
-                            "title": "12h trua",
+                            "title": _("12h trưa"),
                             "payload": 'NOTIFICATION_12',
                         },
                         {
                             "type": "postback",
-                            "title": "3h chieu",
+                            "title": _("3h chiều"),
                             "payload": 'NOTIFICATION_15',
                         },
                     ]
@@ -124,12 +126,12 @@ class MessageService:
                     "buttons": [
                         {
                             "type": "postback",
-                            "title": "Thich",
+                            "title": _("Thích"),
                             "payload": 'LIKECONFIRM_LIKE',
                         },
                         {
                             "type": "postback",
-                            "title": "Khong thich",
+                            "title": _("Không thích"),
                             "payload": 'LIKECONFIRM_NOTLIKE',
                         },
                     ]

@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 from pusher.pusher import Pusher
 
 from accounts.models import User
@@ -33,7 +34,7 @@ def notify_new_article_on_fbmessage(article_id, base_url, facebook_id=None, **us
         fb_user_ids = FacebookUser.objects.all().filter(**user_filter).values_list('facebook_id', flat=True)
     message_service = MessageService()
     for fb_user_id in fb_user_ids:
-        message_service.send_text_message(fb_user_id, 'Tin tức mới nhất cho con ban là "{}"'.format(article.title))
+        message_service.send_text_message(fb_user_id, _('Tin tức mới nhất cho con bạn là "{}"').format(article.title))
         image_url = article.quick_view_image.url
         if not image_url.startswith("http"):
             image_url = base_url + image_url
@@ -59,8 +60,8 @@ def notify_new_chat_on_fbmessage(article_id, user_id):
     else:
         article = Article.objects.get(pk=article_id)
         message_service = MessageService()
-        message = ("Bé vừa gửi một câu hỏi cho biên tập của KIDNEWS. Hình như bé rất thích tin \"{}\"vừa đọc đó nha! "
-                   "^^ Đúng không bạn?".format(article.title))
+        message = _(("Bé vừa gửi một câu hỏi cho biên tập của KIDNEWS. Hình như bé rất thích tin \"{}\"vừa đọc đó nha! "
+                     "^^ Đúng không bạn?").format(article.title))
         message_service.send_like_confirm_message(facebook_user.facebook_id, message)
 
 
@@ -73,8 +74,8 @@ def notify_new_art_on_fbmessage(article_id, user_id):
     else:
         article = Article.objects.get(pk=article_id)
         message_service = MessageService()
-        message = ("Bé vừa hoàn thành một bức tranh từ nội dung \"{}\". "
-                   "Ghé qua coi đi nào! Chắc bạn sẽ thích đó.".format(article.title))
+        message = _(("Bé vừa hoàn thành một bức tranh từ nội dung \"{}\". "
+                     "Ghé qua coi đi nào! Chắc bạn sẽ thích đó.").format(article.title))
         message_service.send_like_confirm_message(facebook_user.facebook_id, message)
 
 

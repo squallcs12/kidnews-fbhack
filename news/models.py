@@ -66,7 +66,9 @@ class Article(models.Model):
 
     def get_user_art(self, user):
         try:
-            return self.art_set.get(user=user).picture.url
+            art = self.art_set.get(user=user)
+            if art.picture:
+                return art.picture.url
         except Art.DoesNotExist:
             return ''
 
