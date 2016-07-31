@@ -120,6 +120,8 @@ class WebhookView(APIView):
             self.send_login_button(sender_id)
 
     def build_absolute_uri(self, page):
+        if page.startswith('http://') or page.startswith('https://'):
+            return page
         if getattr(self, 'request', None):
             return self.request.build_absolute_uri(page)
         return 'http://localhost:8000' + page
